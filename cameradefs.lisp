@@ -1,0 +1,66 @@
+;;; -*- Mode: LISP; package:maxima; syntax:common-lisp; -*- 
+(in-package :maxima)
+(MDEFPROP $SKEWMATRIX
+    ((LAMBDA) ((MLIST) $E)
+     (($MATRIX) ((MLIST) 0. ((MMINUS) (($E ARRAY) 3.)) (($E ARRAY) 2.))
+      ((MLIST) (($E ARRAY) 3.) 0. ((MMINUS) (($E ARRAY) 1.)))
+      ((MLIST) ((MMINUS) (($E ARRAY) 2.)) (($E ARRAY) 1.) 0.)))
+    MEXPR) 
+(ADD2LNC '(($SKEWMATRIX) $E) $FUNCTIONS) 
+(MDEFPROP |$CalMat|
+    ((LAMBDA) ((MLIST) $FX $FY $U $V $S)
+     (($MATRIX) ((MLIST) $FX $S $U) ((MLIST) 0. $FY $V)
+      ((MLIST) 0. 0. 1.)))
+    MEXPR) 
+(ADD2LNC '((|$CalMat|) $FX $FY $U $V $S) $FUNCTIONS) 
+(DSKSETQ |$Rz|
+         '(($MATRIX SIMP)
+           ((MLIST SIMP) ((%COS SIMP) %GAMMA)
+            ((MTIMES SIMP) -1. ((%SIN SIMP) %GAMMA)) 0. 0.)
+           ((MLIST SIMP) ((%SIN SIMP) %GAMMA) ((%COS SIMP) %GAMMA) 0.
+            0.)
+           ((MLIST SIMP) 0. 0. 1. 0.) ((MLIST SIMP) 0. 0. 0. 1.))) 
+(ADD2LNC '|$Rz| $VALUES) 
+(MDEFPROP |$Rz|
+    ((LAMBDA) ((MLIST) $A)
+     (($MATRIX) ((MLIST) ((%COS) $A) ((MMINUS) ((%SIN) $A)) 0. 0.)
+      ((MLIST) ((%SIN) $A) ((%COS) $A) 0. 0.) ((MLIST) 0. 0. 1. 0.)
+      ((MLIST) 0. 0. 0. 1.)))
+    MEXPR) 
+(ADD2LNC '((|$Rz|) $A) $FUNCTIONS) 
+(DSKSETQ |$Ry|
+         '(($MATRIX SIMP)
+           ((MLIST SIMP) ((%COS SIMP) $THETA) 0. ((%SIN SIMP) $THETA))
+           ((MLIST SIMP) 0. 1. 0.)
+           ((MLIST SIMP) ((MTIMES SIMP) -1. ((%SIN SIMP) $THETA)) 0.
+            ((%COS SIMP) $THETA)))) 
+(ADD2LNC '|$Ry| $VALUES) 
+(MDEFPROP |$Ry|
+    ((LAMBDA) ((MLIST) $A)
+     (($MATRIX) ((MLIST) ((%COS) $A) 0. ((%SIN) $A) 0.)
+      ((MLIST) 0. 1. 0. 0.)
+      ((MLIST) ((MMINUS) ((%SIN) $A)) 0. ((%COS) $A) 0.)
+      ((MLIST) 0. 0. 0. 1.)))
+    MEXPR) 
+(ADD2LNC '((|$Ry|) $A) $FUNCTIONS) 
+(DSKSETQ |$Rx|
+         '(($MATRIX SIMP) ((MLIST SIMP) 1. 0. 0.)
+           ((MLIST SIMP) 0. ((%COS SIMP) $PHI)
+            ((MTIMES SIMP) -1. ((%SIN SIMP) $PHI)))
+           ((MLIST SIMP) 0. ((MTIMES SIMP) ((%SIN SIMP) $PHI))
+            ((%COS SIMP) $PHI)))) 
+(ADD2LNC '|$Rx| $VALUES) 
+(MDEFPROP |$Rx|
+    ((LAMBDA) ((MLIST) $A)
+     (($MATRIX) ((MLIST) 1. 0. 0. 0.)
+      ((MLIST) 0. ((%COS) $A) ((MMINUS) ((%SIN) $A)) 0.)
+      ((MLIST) 0. ((%SIN) $A) ((%COS) $A) 0.) ((MLIST) 0. 0. 0. 1.)))
+    MEXPR) 
+(ADD2LNC '((|$Rx|) $A) $FUNCTIONS) 
+(MDEFPROP |$Pmat|
+    ((LAMBDA) ((MLIST) |$c|)
+     (($MATRIX) ((MLIST) 1. 0. 0. ((MMINUS) ((|$c| ARRAY) 1.)))
+      ((MLIST) 0. 1. 0. ((MMINUS) ((|$c| ARRAY) 2.)))
+      ((MLIST) 0. 0. 1. ((MMINUS) ((|$c| ARRAY) 3.)))))
+    MEXPR) 
+(ADD2LNC '((|$Pmat|) |$c|) $FUNCTIONS) 
