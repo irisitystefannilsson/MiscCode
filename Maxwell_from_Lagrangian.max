@@ -1,0 +1,39 @@
+/* Comment */
+/* Electromagnetic Field Tensor F, general form */
+F:genmatrix(F,4,4);
+/* Metric tensor g */
+g:matrix([-1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]);
+ /* Step 1 of field part of Lagrangian */
+ev(F*g . F . g,F[1,1] = 0,F[2,2] = 0,F[3,3] = 0,F[4,4] = 0);
+/* Step 2 of field part of Lagrangian */
+lsum(e,e,list_matrix_entries(%));
+/* Step 3 of field part of Lagrangian */
+ev(%,F[1,2] = -F[2,1],F[1,3] = -F[3,1],F[1,4] = -F[4,1],F[2,3] = -F[3,2],F[2,4] = -F[4,2],F[3,4] = -F[4,3]);
+/* Electric current 4-vector */
+J:matrix([rho,j1,j2,j3]);
+/* Electromagnetic potential 4-vector */
+A:matrix([A0(t,x,y,z),A1(t,x,y,z),A2(t,x,y,z),A3(t,x,y,z)]);
+/* Define F in terms of A */
+kill(F);
+F:matrix([0,(-'diff(A0(t,x,y,z),x))+'diff(A1(t,x,y,z),t),(-'diff(A0(t,x,y,z),y))+'diff(A2(t,x,y,z),t),(-'diff(A0(t,x,y,z),z))+'diff(A3(t,x,y,z),t)],[(-'diff(A1(t,x,y,z),t))+'diff(A0(t,x,y,z),x),0,(-'diff(A1(t,x,y,z),y))+'diff(A2(t,x,y,z),x),(-'diff(A1(t,x,y,z),z))+'diff(A3(t,x,y,z),x)],[(-'diff(A2(t,x,y,z),t))+'diff(A0(t,x,y,z),y),(-'diff(A2(t,x,y,z),x))+'diff(A1(t,x,y,z),y),0,(-'diff(A2(t,x,y,z),z))+'diff(A3(t,x,y,z),y)],[(-'diff(A3(t,x,y,z),t))+'diff(A0(t,x,y,z),z),(-'diff(A3(t,x,y,z),x))+'diff(A1(t,x,y,z),z),(-'diff(A3(t,x,y,z),y))+'diff(A2(t,x,y,z),z),0]);
+/* Final step of field part of Lagrangian (in terms of A) */
+LH:((-1)/4)*ev(%o5);
+/* Current part of Lagrangian */
+LF:J . A;
+/* Total Lagrangian */
+L:LH+LF;
+ /* Apply Euler-Lagrange equation to Lagrangian, first for A0 */
+rhs0:'diff(diff(L,'diff(A0(t,x,y,z),t)),t)+'diff(diff(L,'diff(A0(t,x,y,z),x)),x)+'diff(diff(L,'diff(A0(t,x,y,z),y)),y)+'diff(diff(L,'diff(A0(t,x,y,z),z)),z);
+lhs0:diff(L,A0(t,x,y,z));
+ /* ==> divergence as function of charge density */
+eq0:rhs0 = lhs0;
+/* Then to A1 to get x-part of wave equation for E-field */
+rhs1_1:'diff(diff(L,'diff(A1(t,x,y,z),t)),t)+'diff(diff(L,'diff(A1(t,x,y,z),x)),x)+'diff(diff(L,'diff(A1(t,x,y,z),y)),y)+'diff(diff(L,'diff(A1(t,x,y,z),z)),z);
+lhs1_1:diff(L,A1(t,x,y,z));
+eq1_1:rhs1_1 = lhs1_1;
+/* Define Bianchi identity for F */
+Bianchi(a,b,c):=block(G0:subst([t = 1,x = 2,y = 3,z = 4],['F[b,c],'F[c,a],'F[a,b]]),G1:ev(G0,nouns),subst([u = a],diff(G1[1],u))+subst([v = b],diff(G1[2],v))+subst([w = c],diff(G1[3],w)));
+/* == 0, defines homogeneous parts of Maxwell equations. First zero divergence of magnetic field */
+Bianchi(y,z,x);
+/* ...then z-part of wave equation for B-field */
+Bianchi(x,t,y);
